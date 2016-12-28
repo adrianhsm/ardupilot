@@ -75,7 +75,8 @@ Copter::Copter(void) :
                 g.p_alt_hold, g.p_vel_z, g.pid_accel_z,
                 g.p_pos_xy, g.pi_vel_xy),
     avoid(ahrs, inertial_nav, fence, g2.proximity),
-    wp_nav(inertial_nav, ahrs, pos_control, attitude_control),
+    wp_nav(inertial_nav, ahrs, pos_control, attitude_control, FUNCTOR_BIND_MEMBER(&Copter::gcs_send_mission_item_reached_message,void, uint16_t)),
+    //wp_nav(inertial_nav, ahrs, pos_control, attitude_control),
     circle_nav(inertial_nav, ahrs, pos_control),
     pmTest1(0),
     fast_loopTimer(0),
@@ -115,6 +116,8 @@ Copter::Copter(void) :
     gcs_out_of_time(false),
     param_loader(var_info)
 {
+    //auto wp_complete_fn = FUNCTOR_BIND_MEMBER(&Copter::gcs_send_mission_item_reached_message,void, uint16_t);
+    //wp_nav.setCompleteCallback( &wp_complete_fn );
     memset(&current_loc, 0, sizeof(current_loc));
 
     // init sensor error logging flags
